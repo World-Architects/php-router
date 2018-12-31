@@ -135,13 +135,6 @@ class Route implements RouteInterface
     protected $_handler = null;
 
     /**
-     * The middlewares.
-     *
-     * @var array
-     */
-    protected $_middleware = [];
-
-    /**
      * Constructs a route
      *
      * @param array $config The config array.
@@ -160,7 +153,6 @@ class Route implements RouteInterface
             'params' => [],
             'persist' => [],
             'scope' => null,
-            'middleware' => [],
             'classes' => [
                 'parser' => 'Lead\Router\Parser',
                 'host' => 'Lead\Router\Host'
@@ -183,10 +175,7 @@ class Route implements RouteInterface
 
         $this->host($config['host'], $config['scheme']);
         $this->setMethods($config['methods']);
-
         $this->setScope($config['scope']);
-        $this->_middleware = (array)$config['middleware'];
-
         $this->setPattern($config['pattern']);
     }
 
@@ -489,67 +478,6 @@ class Route implements RouteInterface
         }
 
         return $variables;
-    }
-
-    /**
-     * Dispatches the route.
-     *
-     * @param  mixed $response The outgoing response.
-     * @return mixed           The handler return value.
-     */
-    public function dispatch($response = null)
-    {
-        $this->response = $response;
-        $request = $this->request;
-
-        $generator = $this->middleware();
-
-        $next = function () use ($request, $response, $generator, &$next) {
-            $handler = $generator->current();
-            $generator->next();
-
-            return $handler($request, $response, $next);
-        };
-
-        return $next();
-    }
-
-    /**
-     * Middleware generator.
-     *
-     * @return callable
-     */
-    public function middleware()
-    {
-        foreach ($this->_middleware as $middleware) {
-            yield $middleware;
-        }
-
-        if ($scope = $this->getScope()) {
-            foreach ($scope->middleware() as $middleware) {
-                yield $middleware;
-            }
-        }
-
-        yield function () {
-            $handler = $this->getHandler();
-
-            return $handler($this, $this->response);
-        };
-    }
-
-    /**
-     * Adds a middleware to the list of middleware.
-     *
-     * @param object|Closure A callable middleware.
-     */
-    public function apply($middleware)
-    {
-        foreach (func_get_args() as $mw) {
-            array_unshift($this->_middleware, $mw);
-        }
-
-        return $this;
     }
 
     /**

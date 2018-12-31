@@ -23,8 +23,6 @@ composer require crysalead/router
 
  * [API](docs/API.md)
  * [Router](docs/Router.md)
- * [Middleware](docs/Middleware.md)
- * [Dispatching](docs/Dispatching.md)
 
 ### Acknowledgements
 

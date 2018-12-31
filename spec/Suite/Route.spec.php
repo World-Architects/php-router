@@ -109,28 +109,6 @@ describe("Route", function() {
 
     });
 
-    describe("->apply()", function() {
-
-        it("applies middlewares", function() {
-
-            $r = new Router();
-            $route = $r->bind('foo/bar', function($route) {
-                return 'A';
-            })->apply(function($request, $response, $next) {
-                return '1' . $next() . '1';
-            })->apply(function($request, $response, $next) {
-                return '2' . $next() . '2';
-            });
-
-            $route = $r->route('foo/bar');
-            $actual = $route->dispatch();
-
-            expect($actual)->toBe('21A12');
-
-        });
-
-    });
-
     describe("->link()", function() {
 
         it("creates relative links", function() {
@@ -309,44 +287,6 @@ describe("Route", function() {
             };
             expect($closure)->toThrow(new RouterException("Expected `'id'` to match `'[0-9]{3}'`, but received `'78'`."));
 
-        });
-
-    });
-
-    describe("->dispatch()", function() {
-
-        it("passes route as argument of the handler function", function() {
-
-            $r = new Router();
-            $r->get('foo/{var1}[/{var2}]',
-                ['host' => '{subdomain}.{domain}.bar'],
-                function($route, $response) {
-                    return array_merge([$response], array_values($route->params));
-                }
-            );
-
-            $response = new stdClass();
-
-            $route = $r->route('foo/25', 'GET', 'foo.biz.bar');
-            $actual = $route->dispatch($response);
-            expect($actual)->toBe([$response, 'foo', 'biz', '25', null]);
-
-            $route = $r->route('foo/25/bar', 'GET', 'foo.biz.bar');
-            $actual = $route->dispatch($response);
-            expect($actual)->toBe([$response, 'foo', 'biz', '25', 'bar']);
-
-        });
-
-        it("throws an exception on non valid routes", function() {
-
-            $closure = function() {
-                $r = new Router();
-                $r->get('foo', function() {});
-                $route = $r->route('bar');
-                $route->dispatch();
-            };
-
-            expect($closure)->toThrow(new RouteNotFoundException("No route found for `*:*:GET:/bar`.", 404));
         });
 
     });

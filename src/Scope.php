@@ -23,13 +23,6 @@ class Scope
     protected $_parent = null;
 
     /**
-     * The middleware array.
-     *
-     * @var array
-     */
-    protected $_middleware = [];
-
-    /**
      * The scope data.
      *
      * @var array
@@ -46,14 +39,12 @@ class Scope
         $defaults = [
             'router' => null,
             'parent' => null,
-            'middleware' => [],
             'scope'  => []
         ];
         $config += $defaults;
 
         $this->_router = $config['router'];
         $this->_parent = $config['parent'];
-        $this->_middleware = $config['middleware'];
         $this->_scope = $config['scope'] + [
             'name'           => '',
             'scheme'         => '*',
@@ -75,9 +66,9 @@ class Scope
     {
         return new static(
             [
-            'router' => $this->_router,
-            'parent' => $this,
-            'scope'  => $this->scopify($options)
+                'router' => $this->_router,
+                'parent' => $this,
+                'scope'  => $this->scopify($options)
             ]
         );
     }
@@ -110,36 +101,6 @@ class Scope
         }
 
         return $options + $scope;
-    }
-
-    /**
-     * Middleware generator.
-     *
-     * @return callable
-     */
-    public function middleware()
-    {
-        foreach ($this->_middleware as $middleware) {
-            yield $middleware;
-        }
-        if ($this->_parent) {
-            foreach ($this->_parent->middleware() as $middleware) {
-                yield $middleware;
-            }
-        }
-    }
-
-    /**
-     * Adds a middleware to the list of middleware.
-     *
-     * @param object|Closure A callable middleware.
-     */
-    public function apply($middleware)
-    {
-        foreach (func_get_args() as $mw) {
-            array_unshift($this->_middleware, $mw);
-        }
-        return $this;
     }
 
     /**

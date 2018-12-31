@@ -405,33 +405,6 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
     }
 
     /**
-     * Middleware generator.
-     *
-     * @return callable
-     */
-    public function middleware()
-    {
-        foreach ($this->_scopes[0]->middleware() as $middleware) {
-            yield $middleware;
-        }
-    }
-
-    /**
-     * Adds a middleware to the list of middleware.
-     *
-     * @param  object|Closure A callable middleware.
-     * @return $this
-     */
-    public function apply($middleware)
-    {
-        foreach (func_get_args() as $mw) {
-            $this->_scopes[0]->apply($mw);
-        }
-
-        return $this;
-    }
-
-    /**
      * Sets a dispatcher strategy
      *
      * @param  string   $name    Name
