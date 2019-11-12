@@ -86,6 +86,15 @@ describe("Router", function() {
             }
         });
 
+        it("matches on same path different methods", function() {
+            $r = $this->router;
+            $r->bind('foo/bar', ['name' => 'foo', 'methods' => ['GET']], function () {});
+            $r->bind('foo/bar', ['name' => 'bar', 'methods' => ['PUT']], function () {});
+
+            $route = $r->route('foo/bar', 'PUT');
+            expect($route->name)->toBe('bar');
+        });
+
         it("supports lowercase method names", function() {
 
             $r = $this->router;
