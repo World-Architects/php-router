@@ -10,9 +10,10 @@ use Iterator;
 use Psa\Router\Exception\ParserException;
 use Psa\Router\Exception\RouteNotFoundException;
 use Psa\Router\Exception\RouterException;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\RequestInterface;
 use RuntimeException;
+
 
 /**
  * The Router class.
@@ -489,7 +490,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      *
      * @return \Generator
      */
-    public function middleware()
+    public function middleware(): \Generator
     {
         foreach ($this->_scopes[0]->middleware() as $middleware) {
             yield $middleware;
@@ -677,7 +678,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * @return void Any returned value is ignored.
      * @since  5.0.0
      */
-    public function next()
+    public function next(): void
     {
         $value = $this->_skipNext ? current($this->_data) : next($this->_data);
         $this->_skipNext = false;
@@ -705,7 +706,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * Returns true on success or false on failure.
      * @since  5.0.0
      */
-    public function valid()
+    public function valid(): bool
     {
         return key($this->_data) !== null;
     }
@@ -717,7 +718,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * @return void Any returned value is ignored.
      * @since  5.0.0
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->_skipNext = false;
 
@@ -774,7 +775,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * @return void
      * @since  5.0.0
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (is_null($offset)) {
             $this->_data[] = $value;
@@ -794,7 +795,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * @return void
      * @since  5.0.0
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $this->_skipNext = $offset === key($this->_data);
         unset($this->_data[$offset]);
