@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Lead\Router;
+namespace Psa\Router;
 
-use Lead\Router\Exception\RouterException;
+use Psa\Exception\RouterException;
 
 /**
  * Defines a Host Pattern to match
@@ -15,21 +15,21 @@ class Host implements HostInterface
      *
      * @var array
      */
-    protected $_classes = [];
+    protected mixed $_classes = [];
 
     /**
      * The matching scheme.
      *
      * @var string
      */
-    protected $_scheme = '*';
+    protected string $_scheme = '*';
 
     /**
      * The matching host.
      *
      * @var string
      */
-    protected $_pattern = '*';
+    protected string $_pattern = '*';
 
     /**
      * The tokens structure extracted from host's pattern.
@@ -37,7 +37,7 @@ class Host implements HostInterface
      * @see Parser::tokenize()
      * @var array
      */
-    protected $_token = null;
+    protected ?array $_token = null;
 
     /**
      * The host's regular expression pattern.
@@ -45,7 +45,7 @@ class Host implements HostInterface
      * @see Parser::compile()
      * @var string
      */
-    protected $_regex = null;
+    protected ?string $_regex = null;
 
     /**
      * The host's variables.
@@ -53,20 +53,20 @@ class Host implements HostInterface
      * @see Parser::compile()
      * @var array
      */
-    protected $_variables = null;
+    protected ?array $_variables = null;
 
     /**
      * Constructs a route
      *
      * @param array $config The config array.
      */
-    public function __construct($config = [])
+    public function __construct(array $config = [])
     {
         $defaults = [
             'scheme'     => '*',
             'pattern'     => '*',
             'classes'    => [
-                'parser' => 'Lead\Router\Parser'
+                'parser' => 'Psa\Router\Parser'
             ]
         ];
         $config += $defaults;
@@ -83,7 +83,7 @@ class Host implements HostInterface
      * @param string $scheme Scheme to set.
      * @return $this
      */
-    public function setScheme(string $scheme)
+    public function setScheme(string $scheme): static
     {
         $this->_scheme = $scheme;
 
@@ -106,7 +106,7 @@ class Host implements HostInterface
      * @param string $pattern Pattern
      * @return $this
      */
-    public function setPattern(string $pattern)
+    public function setPattern(string $pattern): static
     {
         $this->_token = null;
         $this->_regex = null;
@@ -131,7 +131,7 @@ class Host implements HostInterface
      *
      * @return array A collection route's token structure.
      */
-    protected function getToken()
+    protected function getToken(): ?array
     {
         if ($this->_token === null) {
             $parser = $this->_classes['parser'];
@@ -163,7 +163,7 @@ class Host implements HostInterface
      *
      * @return array The route's variables and their associated pattern.
      */
-    public function getVariables()
+    public function getVariables(): ?array
     {
         if ($this->_variables !== null) {
             return $this->_variables;
@@ -231,7 +231,7 @@ class Host implements HostInterface
     /**
      * @inheritDoc
      */
-    public function link($params = [], $options = []): string
+    public function link(array $params = [], array $options = []): string
     {
         $defaults = [
             'scheme'   => $this->getScheme()
@@ -249,11 +249,11 @@ class Host implements HostInterface
     /**
      * Helper for `Host::link()`.
      *
-     * @param  array $token  The token structure array.
-     * @param  array $params The route parameters.
+     * @param array $token  The token structure array.
+     * @param array $params The route parameters.
      * @return string The URL path representation of the token structure array.
      */
-    protected function _link($token, $params): string
+    protected function _link(array $token, array $params): string
     {
         $link = '';
         foreach ($token['tokens'] as $child) {
@@ -275,7 +275,7 @@ class Host implements HostInterface
             }
             if (!array_key_exists($child['name'], $params)) {
                 if (!$token['optional']) {
-                    throw new RouterException("Missing parameters `'{$child['name']}'` for host: `'{$this->_pattern}'`.");
+                    throw new \Psa\Router\Exception\RouterException("Missing parameters `'{$child['name']}'` for host: `'{$this->_pattern}'`.");
                 }
                 return '';
             }

@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Lead\Router;
+namespace Psa\Router;
 
 use ArrayAccess;
 use Closure;
 use Countable;
 use Iterator;
-use Lead\Router\Exception\ParserException;
-use Lead\Router\Exception\RouteNotFoundException;
-use Lead\Router\Exception\RouterException;
+use Psa\Router\Exception\ParserException;
+use Psa\Router\Exception\RouteNotFoundException;
+use Psa\Router\Exception\RouterException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
@@ -22,66 +22,66 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
     /**
      * @var bool
      */
-    protected $_skipNext;
+    protected bool $_skipNext;
 
     /**
      * @var array
      */
-    protected $_data = [];
+    protected array $_data = [];
 
     /**
      * @var array
      */
-    protected $_pattern = [];
+    protected array $_pattern = [];
 
     /**
      * Class dependencies.
      *
      * @var array
      */
-    protected $_classes = [];
+    protected mixed $_classes = [];
 
     /**
      * Hosts.
      *
      * @var array
      */
-    protected $_hosts = [];
+    protected array $_hosts = [];
 
     /**
      * Routes.
      *
      * @var array
      */
-    protected $_routes = [];
+    protected array $_routes = [];
 
     /**
      * Scopes stack.
      *
      * @var array
      */
-    protected $_scopes = [];
+    protected array $_scopes = [];
 
     /**
      * Base path.
      *
      * @param string
      */
-    protected $_basePath = '';
+    protected string $_basePath = '';
 
     /**
      * Dispatching strategies.
      *
      * @param array
      */
-    protected $_strategies = [];
+    protected mixed $_strategies = [];
 
     /**
      * Defaults parameters to use when generating URLs in a dispatching context.
      *
      * @var array
      */
-    protected $_defaults = [];
+    protected array $_defaults = [];
 
     /**
      * Default handler
@@ -89,13 +89,14 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * @var callable|null
      */
     protected $defaultHandler = null;
+    private mixed $_defaultHandler;
 
     /**
      * Constructor
      *
      * @param array $config
      */
-    public function __construct($config = [])
+    public function __construct(array $config = [])
     {
         $defaults = [
             'basePath'       => '',
@@ -103,10 +104,10 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
             'strategies'     => [],
             'defaultHandler' => null,
             'classes'        => [
-                'parser'     => 'Lead\Router\Parser',
-                'host'       => 'Lead\Router\Host',
-                'route'      => 'Lead\Router\Route',
-                'scope'      => 'Lead\Router\Scope'
+                'parser'     => 'Psa\Router\Parser',
+                'host'       => 'Psa\Router\Host',
+                'route'      => 'Psa\Router\Route',
+                'scope'      => 'Psa\Router\Scope'
             ]
         ];
 
@@ -126,7 +127,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * @param mixed $handler
      * @return $this
      */
-    public function setDefaultHandler($handler): RouterInterface
+    public function setDefaultHandler(mixed $handler): RouterInterface
     {
         $this->_defaultHandler = $handler;
 
@@ -136,7 +137,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
     /**
      * Returns the current router scope.
      *
-     * @return \Lead\Router\ScopeInterface The current scope instance.
+     * @return \Psa\Router\ScopeInterface The current scope instance.
      */
     public function scope(): ScopeInterface
     {
@@ -159,7 +160,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
     /**
      * Pops the current router scope context.
      *
-     * @return \Lead\Router\ScopeInterface The popped scope instance.
+     * @return \Psa\Router\ScopeInterface The popped scope instance.
      */
     public function popScope(): ScopeInterface
     {
@@ -169,7 +170,6 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
     /**
      * Gets the base path
      *
-     * @param  string $basePath The base path to set or none to get the setted one.
      * @return string
      */
     public function getBasePath(): string
@@ -183,7 +183,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * @param  string $basePath Base Path
      * @return $this
      */
-    public function setBasePath(string $basePath): self
+    public function setBasePath(string $basePath): static
     {
         $basePath = trim($basePath, '/');
         $this->_basePath = $basePath ? '/' . $basePath : '';
@@ -198,7 +198,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * @param      string|null $basePath The base path to set or none to get the setted one.
      * @return     string|self
      */
-    public function basePath(?string $basePath = null)
+    public function basePath(?string $basePath = null): string|static
     {
         if ($basePath === null) {
             return $this->_basePath;
@@ -210,8 +210,8 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
     /**
      * Adds a route to the router
      *
-     * @param \Lead\Router\RouteInterface $route Route object
-     * @return \Lead\Router\RouterInterface
+     * @param \Psa\Router\RouteInterface $route Route object
+     * @return \Psa\Router\RouterInterface
      */
     public function addRoute(RouteInterface $route): RouterInterface {
          $options['pattern'] = $pattern = $route->getPattern();
@@ -250,12 +250,12 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
     /**
      * Adds a route.
      *
-     * @param  string|array  $pattern The route's pattern.
-     * @param  Closure|array $options An array of options or the callback handler.
-     * @param  Closure|null  $handler The callback handler.
+     * @param array|string $pattern The route's pattern.
+     * @param callable|array $options An array of options or the callback handler.
+     * @param callable|null $handler The callback handler.
      * @return self
      */
-    public function bind($pattern, $options = [], $handler = null): RouteInterface
+    public function bind(array|string $pattern, callable|array $options = [], callable $handler = null): RouteInterface
     {
         if (!is_array($options)) {
             $handler = $options;
@@ -321,12 +321,12 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
     /**
      * Groups some routes inside a new scope.
      *
-     * @param  string|array $prefix  The group's prefix pattern or the options array.
-     * @param  Closure|array $options An array of options or the callback handler.
-     * @param  Closure|null  $handler The callback handler.
-     * @return \Lead\Router\ScopeInterface The newly created scope instance.
+     * @param array|string $prefix  The group's prefix pattern or the options array.
+     * @param Closure|array|string $options An array of options or the callback handler.
+     * @param Closure|null $handler The callback handler.
+     * @return \Psa\Router\ScopeInterface The newly created scope instance.
      */
-    public function group($prefix, $options, $handler = null)
+    public function group(array|string $prefix, Closure|array|string $options, Closure $handler = null): ScopeInterface
     {
         if (!is_array($options)) {
             $handler = $options;
@@ -341,7 +341,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
             throw new RouterException("The handler needs to be an instance of `Closure` or implements the `__invoke()` magic method.");
         }
 
-        $options['prefix'] = isset($options['prefix']) ? $options['prefix'] : $prefix;
+        $options['prefix'] = $options['prefix'] ?? $prefix;
 
         $scope = $this->scope();
 
@@ -378,9 +378,9 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * Routes a Request.
      *
      * @param mixed $request The request to route.
-     * @return \Lead\Router\RouteInterface A route matching the request or a "route not found" route.
+     * @return \Psa\Router\RouteInterface A route matching the request or a "route not found" route.
      */
-    public function route($request): RouteInterface
+    public function route(mixed $request): RouteInterface
     {
         $defaults = [
             'path' => '',
@@ -440,9 +440,9 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * Routes a request.
      *
      * @param array $request The request to route.
-     * @return null|\Lead\Router\RouteInterface
+     * @return null|\Psa\Router\RouteInterface
      */
-    protected function _route($request): ?RouteInterface
+    protected function _route(array $request): ?RouteInterface
     {
         $path = $request['path'];
         $httpMethod = $request['method'];
@@ -467,7 +467,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
                         continue;
                     }
                     foreach ($routes as $route) {
-                        /* @var $route \Lead\Router\RouteInterface */
+                        /* @var $route \Psa\Router\RouteInterface */
                         if (!$route->match($request, $variables, $hostVariables)) {
                             if ($hostVariables === null) {
                                 continue 3;
@@ -487,7 +487,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
     /**
      * Middleware generator.
      *
-     * @return callable
+     * @return \Generator
      */
     public function middleware()
     {
@@ -502,7 +502,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * @param  object|Closure A callable middleware.
      * @return $this
      */
-    public function apply($middleware)
+    public function apply($middleware): static
     {
         foreach (func_get_args() as $mw) {
             $this->_scopes[0]->apply($mw);
@@ -518,7 +518,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * @param  callable $handler Handler
      * @return $this
      */
-    public function setStrategy(string $name, callable $handler)
+    public function setStrategy(string $name, callable $handler): static
     {
         $this->_strategies[$name] = $handler;
 
@@ -545,7 +545,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * @param  string $name
      * @return $this
      */
-    public function unsetStrategy(string $name)
+    public function unsetStrategy(string $name): static
     {
         if (isset($this->_strategies[$name])) {
             unset($this->_strategies[$name]);
@@ -559,12 +559,12 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
     /**
      * Gets/sets router's strategies.
      *
-     * @deprecated Use setStrategy(), unsetStrategy() and getStrategy()
      * @param      string $name    A routing strategy name.
-     * @param      mixed  $handler The strategy handler or none to get the setted one.
+     * @param mixed|null $handler The strategy handler or none to get the setted one.
      * @return     mixed           The strategy handler (or `null` if not found) on get or `$this` on set.
+     *@deprecated Use setStrategy(), unsetStrategy() and getStrategy()
      */
-    public function strategy($name, $handler = null)
+    public function strategy(string $name, mixed $handler = null): mixed
     {
         if (func_num_args() === 1) {
             try {
@@ -593,10 +593,10 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * Adds a route based on a custom HTTP verb.
      *
      * @param string $name   The HTTP verb to define a route on.
-     * @param array  $params The route's parameters.
+     * @param array $params The route's parameters.
      * @return mixed
      */
-    public function __call($name, $params)
+    public function __call(string $name, array $params)
     {
         if ($strategy = $this->strategy($name)) {
             array_unshift($params, $this);
@@ -665,7 +665,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * @return mixed Can return any type.
      * @since  5.0.0
      */
-    public function current()
+    public function current(): mixed
     {
         return current($this->_data);
     }
@@ -692,7 +692,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * @return mixed scalar on success, or null on failure.
      * @since  5.0.0
      */
-    public function key()
+    public function key(): mixed
     {
         return array_keys($this->_data);
     }
@@ -737,7 +737,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * The return value will be casted to boolean if non-boolean was returned.
      * @since  5.0.0
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return array_key_exists($offset, $this->_data);
     }
@@ -752,7 +752,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      * @return mixed Can return all value types.
      * @since  5.0.0
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->_data[$offset];
     }
@@ -815,7 +815,7 @@ class Router implements ArrayAccess, Iterator, Countable, RouterInterface
      *
      * @return integer Returns the number of items in the collection.
      */
-    public function count()
+    public function count(): int
     {
         return count($this->_data);
     }

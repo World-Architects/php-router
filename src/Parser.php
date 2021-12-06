@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Lead\Router;
+namespace Psa\Router;
 
-use Lead\Router\Exception\ParserException;
+use Psa\Router\Exception\ParserException;
 
 /**
  * Parses route pattern.
@@ -105,8 +105,6 @@ EOD;
     protected static function _tokenizePattern(string $pattern, string $delimiter, &$variable = null): array
     {
         $tokens = [];
-        $index = 0;
-        $path = '';
         $parts = static::split($pattern);
 
         foreach ($parts as $part) {
@@ -142,7 +140,7 @@ EOD;
      * @param array An array of tokens structure.
      * @return array
      */
-    protected static function _tokenizeSegment($pattern, $delimiter, &$variable = null): array
+    protected static function _tokenizeSegment(string $pattern, string $delimiter, &$variable = null): array
     {
         $tokens = [];
         $index = 0;
@@ -252,7 +250,7 @@ EOD;
      * @param array $token A tokens structure root node.
      * @return array An array containing the regex pattern and its associated variable names.
      */
-    public static function compile($token): array
+    public static function compile(array $token): array
     {
         $variables = [];
         $regex = '';

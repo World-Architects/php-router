@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Lead\Router\Spec\Suite;
+namespace Psa\Router\Spec\Suite;
 
-use Lead\Router\Exception\RouterException;
-use Lead\Router\Host;
+use Psa\Router\Exception\RouterException;
+use Psa\Router\Host;
 
 describe("Host", function() {
 

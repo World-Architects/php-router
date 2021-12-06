@@ -16,7 +16,7 @@ The URL dispatching is done in two steps. First the `->route()` method is called
 The `->route()` method returns a route (or a "not found" route), then the `->dispatch()` method will execute the dispatching logic contained in the route handler (or throwing an exception for non valid routes).
 
 ```php
-use Lead\Router\Router;
+use Psa\Router\Router;
 
 $router = new Router();
 
@@ -48,9 +48,9 @@ echo $route->dispatch(); // Can throw an exception if the route is not valid.
 It also possible to use compatible Request/Response instance for the dispatching.
 
 ```php
-use Lead\Router\Router;
-use Lead\Net\Http\Cgi\Request;
-use Lead\Net\Http\Response;
+use Psa\Router\Router;
+use Psa\Net\Http\Cgi\Request;
+use Psa\Net\Http\Response;
 
 $request = Request::ingoing();
 $response = new Response();
@@ -69,10 +69,10 @@ echo $route->dispatch($response); // Can throw an exception if the route is not 
 #### Handling dispatching failures
 
 ```php
-use Lead\Router\RouterException;
-use Lead\Router\Router;
-use Lead\Net\Http\Cgi\Request;
-use Lead\Net\Http\Response;
+use Psa\Router\RouterException;
+use Psa\Router\Router;
+use Psa\Net\Http\Cgi\Request;
+use Psa\Net\Http\Response;
 
 $request = Request::ingoing();
 $response = new Response();
@@ -100,7 +100,7 @@ To use your own strategy you need to create it using the `->strategy()` method.
 Bellow an example of a RESTful strategy:
 
 ```php
-use Lead\Router\Router;
+use Psa\Router\Router;
 use My\Custom\Namespace\ResourceStrategy;
 
 Router::strategy('resource', new ResourceStrategy());

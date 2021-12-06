@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Lead\Router\Spec\Suite;
+namespace Psa\Router\Spec\Suite;
 
 use Kahlan\Plugin\Double;
-use Lead\Router\Exception\RouteNotFoundException;
-use Lead\Router\Exception\RouterException;
-use Lead\Router\Router;
-use Lead\Router\Route;
+use Psa\Router\Exception\RouteNotFoundException;
+use Psa\Router\Exception\RouterException;
+use Psa\Router\Router;
+use Psa\Router\Route;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 

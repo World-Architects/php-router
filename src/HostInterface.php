@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Lead\Router;
+namespace Psa\Router;
 
 /**
  * HostInterface
@@ -12,10 +12,10 @@ interface HostInterface
      * Checks if a host matches a host pattern.
      *
      * @param string $request The request to check.
-     * @param string $hostVariables The matches host variables
+     * @param string|null $hostVariables The matches host variables
      * @return bool Returns `true` on success, false otherwise.
      */
-    public function match($request, &$hostVariables = null): bool;
+    public function match(string $request, string &$hostVariables = null): bool;
 
     /**
      * Returns the host's link.
@@ -27,5 +27,5 @@ interface HostInterface
      *
      * @return string The link.
      */
-    public function link($params = [], $options = []): string;
+    public function link(array $params = [], array $options = []): string;
 }

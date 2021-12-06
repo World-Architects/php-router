@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Lead\Router;
+namespace Psa\Router;
 
 /**
  * Scope
@@ -13,35 +13,35 @@ class Scope implements ScopeInterface
      *
      * @var object
      */
-    protected $_router = null;
+    protected mixed $_router = null;
 
     /**
      * The parent instance.
      *
      * @var object
      */
-    protected $_parent = null;
+    protected mixed $_parent = null;
 
     /**
      * The middleware array.
      *
      * @var array
      */
-    protected $_middleware = [];
+    protected mixed $_middleware = [];
 
     /**
      * The scope data.
      *
      * @var array
      */
-    protected $_scope = [];
+    protected mixed $_scope = [];
 
     /**
      * The constructor.
      *
      * @param array $config The config array.
      */
-    public function __construct($config = [])
+    public function __construct(array $config = [])
     {
         $defaults = [
             'router' => null,
@@ -115,9 +115,9 @@ class Scope implements ScopeInterface
     /**
      * Middleware generator.
      *
-     * @return callable
+     * @return callable|\Generator
      */
-    public function middleware()
+    public function middleware(): callable|\Generator
     {
         foreach ($this->_middleware as $middleware) {
             yield $middleware;
@@ -133,7 +133,7 @@ class Scope implements ScopeInterface
      * Adds a middleware to the list of middleware
      *
      * @param object|\Closure A callable middleware
-     * @return \Lead\Router\ScopeInterface
+     * @return \Psa\Router\ScopeInterface
      */
     public function apply($middleware): ScopeInterface
     {

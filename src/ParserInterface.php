@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Lead\Router;
+namespace Psa\Router;
 
 /**
  * ParserInterface
@@ -38,5 +38,5 @@ interface ParserInterface
      * @param array $token A tokens structure root node.
      * @return array An array containing the regex pattern and its associated variable names.
      */
-    public static function compile($token): array;
+    public static function compile(array $token): array;
 }

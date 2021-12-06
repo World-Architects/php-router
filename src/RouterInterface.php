@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Lead\Router;
+namespace Psa\Router;
 
 /**
  * Router Interface
@@ -11,17 +11,16 @@ interface RouterInterface
     /**
      * Adds a route.
      *
-     * @param  string|array $pattern The route's pattern.
-     * @param  callable|array $options An array of options or the callback handler.
-     * @param  callable|null $handler The callback handler.
+     * @param array|string $pattern The route's pattern.
+     * @param callable|array $options An array of options or the callback handler.
+     * @param callable|null $handler The callback handler.
      * @return self
      */
-    public function bind($pattern, $options = [], $handler = null): RouteInterface;
+    public function bind(array|string $pattern, callable|array $options = [], callable $handler = null): RouteInterface;
 
     /**
      * Gets the base path
      *
-     * @param  string $basePath The base path to set or none to get the setted one.
      * @return string
      */
     public function getBasePath(): string;
@@ -32,15 +31,15 @@ interface RouterInterface
      * @param  string $basePath Base Path
      * @return $this
      */
-    public function setBasePath(string $basePath);
+    public function setBasePath(string $basePath): static;
 
     /**
      * Routes a Request.
      *
      * @param mixed $request The request to route.
-     * @return \Lead\Router\RouteInterface A route matching the request or a "route not found" route.
+     * @return \Psa\Router\RouteInterface A route matching the request or a "route not found" route.
      */
-    public function route($request): RouteInterface;
+    public function route(mixed $request): RouteInterface;
 
     /**
      * Returns a route's link.
@@ -52,7 +51,7 @@ interface RouterInterface
      *                         _string_ : The scheme. - `'host'`     _string_ : The host
      *                         name. - `'basePath'` _string_ : The base path. - `'query'`
      *                         _string_ : The query string. - `'fragment'` _string_ : The
-     *                         fragment string.                         
+     *                         fragment string.
      * @return string The link.
      */
     public function link(string $name, array $params = [], array $options = []): string;

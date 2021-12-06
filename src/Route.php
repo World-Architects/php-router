@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Lead\Router;
+namespace Psa\Router;
 
 use Closure;
 use Generator;
 use InvalidArgumentException;
-use Lead\Router\Exception\RouterException;
+use Psa\Router\Exception\RouterException;
 use RuntimeException;
 
 /**
@@ -26,49 +26,49 @@ class Route implements RouteInterface
      *
      * @var array
      */
-    protected $_classes = [];
+    protected mixed $_classes = [];
 
     /**
      * Route's name.
      *
      * @var string
      */
-    public $name = '';
+    public string $name = '';
 
     /**
      * Named parameter.
      *
      * @var array
      */
-    public $params = [];
+    public array $params = [];
 
     /**
      * List of parameters that should persist during dispatching.
      *
      * @var array
      */
-    public $persist = [];
+    public array $persist = [];
 
     /**
      * The attached namespace.
      *
      * @var string
      */
-    public $namespace = '';
+    public string $namespace = '';
 
     /**
      * The attached request.
      *
      * @var mixed
      */
-    public $request = null;
+    public mixed $request = null;
 
     /**
      * The attached response.
      *
      * @var mixed
      */
-    public $response = null;
+    public mixed $response = null;
 
     /**
      * The dispatched instance (custom).
@@ -80,37 +80,37 @@ class Route implements RouteInterface
     /**
      * The route scope.
      *
-     * @var \Lead\Router\Scope|null
+     * @var \Psa\Router\Scope|null
      */
-    protected $_scope = null;
+    protected ?Scope $_scope = null;
 
     /**
      * The route's host.
      *
-     * @var \Lead\Router\Host
+     * @var \Psa\Router\Host
      */
-    protected $_host = null;
+    protected ?Host $_host = null;
 
     /**
      * Route's allowed methods.
      *
      * @var array
      */
-    protected $_methods = [];
+    protected array $_methods = [];
 
     /**
      * Route's prefix.
      *
      * @var string
      */
-    protected $_prefix = '';
+    protected string $_prefix = '';
 
     /**
      * Route's pattern.
      *
      * @var string
      */
-    protected $_pattern = '';
+    protected string $_pattern = '';
 
     /**
      * The tokens structure extracted from route's pattern.
@@ -118,7 +118,7 @@ class Route implements RouteInterface
      * @see Parser::tokenize()
      * @var array
      */
-    protected $_token = null;
+    protected ?array $_token = null;
 
     /**
      * The route's regular expression pattern.
@@ -126,7 +126,7 @@ class Route implements RouteInterface
      * @see Parser::compile()
      * @var string
      */
-    protected $_regex = null;
+    protected ?string $_regex = null;
 
     /**
      * The route's variables.
@@ -134,35 +134,35 @@ class Route implements RouteInterface
      * @see Parser::compile()
      * @var array
      */
-    protected $_variables = null;
+    protected ?array $_variables = null;
 
     /**
      * The route's handler to execute when a request match.
      *
      * @var Closure
      */
-    protected $_handler = null;
+    protected ?Closure $_handler = null;
 
     /**
      * The middlewares.
      *
      * @var array
      */
-    protected $_middleware = [];
+    protected array $_middleware = [];
 
     /**
      * Attributes
      *
      * @var array
      */
-    protected $_attributes = [];
+    protected array $_attributes = [];
 
     /**
      * Constructs a route
      *
      * @param array $config The config array.
      */
-    public function __construct($config = [])
+    public function __construct(array $config = [])
     {
         $config = $this->getDefaultConfig($config);
 
@@ -184,11 +184,11 @@ class Route implements RouteInterface
      * Sets the middlewares
      *
      * @param array $middleware Middlewares
-     * @return \Lead\Router\Route
+     * @return \Psa\Router\Route
      */
-    public function setMiddleware(array $middleware)
+    public function setMiddleware(array $middleware): static
     {
-        $this->_middleware = (array)$middleware;
+        $this->_middleware = $middleware;
 
         return $this;
     }
@@ -199,7 +199,7 @@ class Route implements RouteInterface
      * @param array $config Values to merge
      * @return array
      */
-    protected function getDefaultConfig($config = []): array
+    protected function getDefaultConfig(array $config = []): array
     {
         $defaults = [
             'scheme' => '*',
@@ -215,8 +215,8 @@ class Route implements RouteInterface
             'scope' => null,
             'middleware' => [],
             'classes' => [
-                'parser' => 'Lead\Router\Parser',
-                'host' => 'Lead\Router\Host'
+                'parser' => 'Psa\Router\Parser',
+                'host' => 'Psa\Router\Host'
             ]
         ];
         $config += $defaults;
@@ -229,11 +229,13 @@ class Route implements RouteInterface
      *
      * This method can be used to set arbitrary date attributes to a route.
      *
+     * Todo: Check if value param is not needed
+     *
      * @param string $name Name
      * @param mixed $value Value
-     * @return \Lead\Router\RouteInterface
+     * @return \Psa\Router\RouteInterface
      */
-    public function setAttribute($name, $value): RouteInterface
+    public function setAttribute(string $name, mixed $value): RouteInterface
     {
         if (isset($this->_attributes[$name])) {
             return $this->_attributes[$name];
@@ -247,7 +249,7 @@ class Route implements RouteInterface
      * @param string $name Attribute name
      * @return mixed
      */
-    public function getAttribute(string $name)
+    public function getAttribute(string $name): mixed
     {
         if (isset($this->_attributes[$name])) {
             return $this->_attributes[$name];
@@ -387,13 +389,13 @@ class Route implements RouteInterface
     /**
      * Sets the route host.
      *
-     * @param string|\Lead\Router\HostInterface $host The host instance to set or none to get the set one
+     * @param string|null $host The host instance to set or none to get the set one
      * @param string $scheme HTTP Scheme
      * @return $this The current host on get or `$this` on set
      */
-    public function setHost($host = null, string $scheme = '*'): RouteInterface
+    public function setHost(string $host = null, string $scheme = '*'): RouteInterface
     {
-        if (!is_string($host) && $host instanceof Host && $host !== null) {
+        if (!is_string($host) && $host instanceof Host) {
             throw new InvalidArgumentException();
         }
 
@@ -432,10 +434,10 @@ class Route implements RouteInterface
     /**
      * Sets methods
      *
-     * @param  string|array $methods
+     * @param array|string $methods
      * @return $this
      */
-    public function setMethods($methods): self
+    public function setMethods(array|string $methods): self
     {
         $methods = $methods ? (array)$methods : [];
         $methods = array_map('strtoupper', $methods);
@@ -455,10 +457,10 @@ class Route implements RouteInterface
     /**
      * Allows additional methods.
      *
-     * @param  string|array $methods The methods to allow.
+     * @param array|string $methods The methods to allow.
      * @return self
      */
-    public function allow($methods = [])
+    public function allow(array|string $methods = [])
     {
         $methods = $methods ? (array)$methods : [];
         $methods = array_map('strtoupper', $methods);
@@ -478,7 +480,7 @@ class Route implements RouteInterface
     /**
      * Gets the routes Scope
      *
-     * @return \Lead\Router\Scope
+     * @return \Psa\Router\Scope
      */
     public function getScope(): ?ScopeInterface
     {
@@ -488,7 +490,7 @@ class Route implements RouteInterface
     /**
      * Sets a routes scope
      *
-     * @param  \Lead\Router\Scope|null $scope Scope
+     * @param  \Psa\Router\Scope|null $scope Scope
      * @return $this;
      */
     public function setScope(?Scope $scope): RouteInterface
@@ -590,9 +592,9 @@ class Route implements RouteInterface
     /**
      * Gets the routes handler
      *
-     * @return mixed
+     * @return callable|Closure|null
      */
-    public function getHandler()
+    public function getHandler(): callable|Closure|null
     {
         return $this->_handler;
     }
@@ -603,7 +605,7 @@ class Route implements RouteInterface
      * @param mixed $handler The route handler.
      * @return self
      */
-    public function setHandler($handler): RouteInterface
+    public function setHandler(mixed $handler): RouteInterface
     {
         if (!is_callable($handler) && !is_string($handler) && $handler !== null) {
             throw new InvalidArgumentException('Handler must be a callable, string or null');
@@ -617,10 +619,10 @@ class Route implements RouteInterface
     /**
      * Checks if the route instance matches a request.
      *
-     * @param  array $request a request.
+     * @param array $request a request.
      * @return bool
      */
-    public function match($request, &$variables = null, &$hostVariables = null): bool
+    public function match(array $request, array &$variables = null, array &$hostVariables = null): bool
     {
         $hostVariables = [];
 
@@ -628,8 +630,8 @@ class Route implements RouteInterface
             return false;
         }
 
-        $path = isset($request['path']) ? $request['path'] : '';
-        $method = isset($request['method']) ? $request['method'] : '*';
+        $path = $request['path'] ?? '';
+        $method = $request['method'] ?? '*';
 
         if (!isset($this->_methods['*']) && $method !== '*' && !isset($this->_methods[$method])) {
             if ($method !== 'HEAD' && !isset($this->_methods['GET'])) {
@@ -651,8 +653,7 @@ class Route implements RouteInterface
     /**
      * Combines route's variables names with the regex matched route's values.
      *
-     * @param  array $varNames The variable names array with their corresponding pattern segment when applicable.
-     * @param  array $values   The matched values.
+     * @param array $values The matched values.
      * @return array           The route's variables.
      */
     protected function _buildVariables(array $values): array
@@ -673,7 +674,7 @@ class Route implements RouteInterface
                 $rule = $parser::compile($token);
                 if (preg_match_all('~' . $rule[0] . '~', $values[$i], $parts)) {
                     foreach ($parts[1] as $value) {
-                        if (strpos($value, '/') !== false) {
+                        if (str_contains($value, '/')) {
                             $variables[$name][] = explode('/', $value);
                         } else {
                             $variables[$name][] = $value;
@@ -692,10 +693,10 @@ class Route implements RouteInterface
     /**
      * Dispatches the route.
      *
-     * @param  mixed $response The outgoing response.
+     * @param mixed|null $response The outgoing response.
      * @return mixed The handler return value.
      */
-    public function dispatch($response = null)
+    public function dispatch(mixed $response = null)
     {
         $this->response = $response;
         $request = $this->request;
@@ -801,7 +802,7 @@ class Route implements RouteInterface
                 $link = $this->_host->link($params, $options) . "{$link}";
             } else {
                 $scheme = !empty($options['scheme']) ? $options['scheme'] . '://' : '//';
-                $host = isset($options['host']) ? $options['host'] : 'localhost';
+                $host = $options['host'] ?? 'localhost';
                 $link = "{$scheme}{$host}{$link}";
             }
         }

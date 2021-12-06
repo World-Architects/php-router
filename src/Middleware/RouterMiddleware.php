@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Lead\Router\Middleware;
+namespace Psa\Router\Middleware;
 
-use Lead\Router\Exception\RouteNotFoundException;
-use Lead\Router\RouterInterface;
+use Psa\Router\Exception\RouteNotFoundException;
+use Psa\Router\RouterInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -18,9 +18,9 @@ class RouterMiddleware implements MiddlewareInterface
     /**
      * Router
      *
-     * @var \Lead\Router\Router
+     * @var \Psa\Router\Router
      */
-    protected $router;
+    protected RouterInterface|\Psa\Router\Router $router;
 
     /**
      * Not found callback
@@ -34,19 +34,19 @@ class RouterMiddleware implements MiddlewareInterface
      *
      * @var bool
      */
-    protected $ignoreNotFoundException = false;
+    protected bool $ignoreNotFoundException = false;
 
     /**
      * The request attribute name for the route
      *
      * @var string
      */
-    protected $routeAttribute = 'route';
+    protected string $routeAttribute = 'route';
 
     /**
      * Constructor
      *
-     * @param \Lead\Router\RouterInterface $router Router
+     * @param RouterInterface $router Router
      */
     public function __construct(
         RouterInterface $router
@@ -85,10 +85,10 @@ class RouterMiddleware implements MiddlewareInterface
      * delegating response creation to a handler.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request Request
-     * @param \Psr\Http\Server\RequestHandlerInterface $requestHandler Request Handler
+     * @param \Psr\Http\Server\RequestHandlerInterface $handler Request Handler
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $requestHandler): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         try {
             $route = $this->router->route($request);
@@ -107,6 +107,6 @@ class RouterMiddleware implements MiddlewareInterface
             }
         }
 
-        return $requestHandler->handle($request);
+        return $handler->handle($request);
     }
 }

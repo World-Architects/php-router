@@ -3,7 +3,7 @@
 The `Router` instance can be instantiated so:
 
 ```php
-use Lead\Router\Router;
+use Psa\Router\Router;
 
 $router = new Router();
 ```
@@ -34,7 +34,7 @@ $router->strategy();   // Gets/sets a routing strategy
 Example of routes definition:
 
 ```php
-use Lead\Router\Router;
+use Psa\Router\Router;
 
 $router = new Router();
 

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Lead\Router;
+namespace Psa\Router;
 
 /**
  * RouteInterface
@@ -33,23 +33,23 @@ interface RouteInterface
     /**
      * Sets the route host.
      *
-     * @param  object $host The host instance to set or none to get the set one.
-     * @param  string $scheme HTTP Scheme
-     * @return object|self       The current host on get or `$this` on set.
+     * @param string|null $host The host instance to set or none to get the set one.
+     * @param string $scheme HTTP Scheme
+     * @return RouteInterface The current host on get or `$this` on set.
      */
-    public function setHost($host = null, string $scheme = '*'): RouteInterface;
+    public function setHost(string $host = null, string $scheme = '*'): RouteInterface;
 
     /**
      * Gets the routes Scope
      *
-     * @return \Lead\Router\Scope
+     * @return \Psa\Router\Scope
      */
     public function getScope(): ?ScopeInterface;
 
     /**
      * Sets a routes scope
      *
-     * @param  \Lead\Router\Scope|null $scope Scope
+     * @param  \Psa\Router\Scope|null $scope Scope
      * @return $this;
      */
     public function setScope(?Scope $scope): RouteInterface;
@@ -59,7 +59,7 @@ interface RouteInterface
      *
      * @return null|callable|\Closure
      */
-    public function getHandler();
+    public function getHandler(): callable|\Closure|null;
 
     /**
      * Gets/sets the route's handler.
@@ -67,17 +67,17 @@ interface RouteInterface
      * @param mixed $handler The route handler.
      * @return self
      */
-    public function setHandler($handler): RouteInterface;
+    public function setHandler(mixed $handler): RouteInterface;
 
     /**
      * Checks if the route instance matches a request.
      *
-     * @param  array $request a request.
+     * @param array $request a request.
      * @param array|null $variables Variables
      * @param array|null $hostVariables Host variables
      * @return bool
      */
-    public function match($request, &$variables = null, &$hostVariables = null): bool;
+    public function match(array $request, array &$variables = null, array &$hostVariables = null): bool;
 
     /**
       * Returns the route's link.

@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Lead\Router\Spec\Suite;
+namespace Psa\Router\Spec\Suite;
 
-use Lead\Router\Exception\ParserException;
-use Lead\Router\Parser;
+use Psa\Router\Exception\ParserException;
+use Psa\Router\Parser;
 
 describe("Parser", function() {
 
